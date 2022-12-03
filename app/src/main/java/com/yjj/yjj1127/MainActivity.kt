@@ -56,10 +56,9 @@ class MainActivity : AppCompatActivity() {
     val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         var intent = result.data
         Log.d("[TAG]", result.resultCode.toString())
-        Log.d("[TAG]", intent!!.data.toString())
+        Log.d("[TAG]", intent?.data.toString())
 
         if (result.resultCode == RESULT_OK) {
-
             if(intent == null){
                 intent = Intent()
             }
@@ -82,18 +81,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if(VERSION_CODE > MINIMUM_SDK_VERSION){
+        if(VERSION_CODE <= MINIMUM_SDK_VERSION){
             TedPermission.create()
                 .setPermissionListener(permissionlistener)
-                .setRationaleMessage("카메라 권한이 필요합니다.")
-                .setDeniedMessage("카메라 권한을 거부하셨습니다.")
+//                .setRationaleMessage("카메라 권한이 필요합니다.")
+//                .setDeniedMessage("카메라 권한을 거부하셨습니다.")
                 .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check();
         }else{
             TedPermission.create()
                 .setPermissionListener(permissionlistener)
-                .setRationaleMessage("카메라 권한이 필요합니다.")
-                .setDeniedMessage("카메라 권한을 거부하셨습니다.")
+//                .setRationaleMessage("카메라 권한이 필요합니다.")
+//                .setDeniedMessage("카메라 권한을 거부하셨습니다.")
                 .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .check();
         }
@@ -125,20 +124,19 @@ class MainActivity : AppCompatActivity() {
 
                     // Log.d("[TAG2]", takePictureIntent.toString())
 
-                    launcher.launch(takePictureIntent)
+                    //launcher.launch(takePictureIntent)
 
+                    val contentSelectionIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    contentSelectionIntent.type = "image/*"
 
-//                    val contentSelectionIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//                    contentSelectionIntent.type = "image/*"
-//
-//                    var intentArray: Array<Intent?>
-//                    intentArray = arrayOf(takePictureIntent)
-//
-//                    val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-//                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-//                    chooserIntent.putExtra(Intent.EXTRA_TITLE,"사용할 앱을 선택해주세요.")
-//                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-//                    launcher.launch(chooserIntent)
+                    var intentArray: Array<Intent?>
+                    intentArray = arrayOf(takePictureIntent)
+
+                    val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+                    chooserIntent.putExtra(Intent.EXTRA_TITLE,"사용할 앱을 선택해주세요.")
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+                    launcher.launch(chooserIntent)
 
                     return true
                 }catch (e: Exception){
@@ -152,22 +150,22 @@ class MainActivity : AppCompatActivity() {
         wv.loadUrl(url)
 
 
-        binding.cameraButton.setOnClickListener {
-            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-            val StorageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", StorageDir)
-            val photoUri : Uri = FileProvider.getUriForFile(this, "com.yjj.yjj1127.android.file-provider", file)
-
-            filePath = file.absolutePath
-
-            //Toast.makeText(this, "${file.exists()} ${file.length()}", Toast.LENGTH_SHORT).show()
-            // Log.e("[MYCamera]", "${file.exists()} ${file.length()}")
-
-            val camera_intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-            //startActivityForResult(camera_intent, CARMER_PIC_ID)
-            launcher.launch(camera_intent)
-        }
+//        binding.cameraButton.setOnClickListener {
+//            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+//            val StorageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+//            val file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", StorageDir)
+//            val photoUri : Uri = FileProvider.getUriForFile(this, "com.yjj.yjj1127.android.file-provider", file)
+//
+//            filePath = file.absolutePath
+//
+//            //Toast.makeText(this, "${file.exists()} ${file.length()}", Toast.LENGTH_SHORT).show()
+//            // Log.e("[MYCamera]", "${file.exists()} ${file.length()}")
+//
+//            val camera_intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//            camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+//            //startActivityForResult(camera_intent, CARMER_PIC_ID)
+//            launcher.launch(camera_intent)
+//        }
 
 
 
