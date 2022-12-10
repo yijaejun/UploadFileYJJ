@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">yjj1127</string>
+    <string name="important_notification_channel_id">important_channel</string>
 </resources>
