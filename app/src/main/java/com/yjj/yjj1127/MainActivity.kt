@@ -1,9 +1,11 @@
 package com.yjj.yjj1127
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.view.Surface
+import android.util.Log
 import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.yjj.yjj1127.databinding.ActivityMainBinding
@@ -24,6 +26,17 @@ class MainActivity : AppCompatActivity() {
 
         val wv=binding.webView
         wv.settings.javaScriptEnabled=true
+        //wv.webChromeClient = MyChromeWebClient()
+
+        wv.webViewClient = object : WebViewClient(){
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                //return super.shouldOverrideUrlLoading(view, request)
+                return false // 외부 브라우저를 사용하지 못하도록 처리됨.
+            }
+        }
 
 
         wv.addJavascriptInterface(
@@ -33,37 +46,88 @@ class MainActivity : AppCompatActivity() {
 
 
         wv.loadUrl("file:///android_asset/webview1.html")
-
-//        Surface(color = MaterialTheme.colors.background) {
-//            Column {
-//                AndroidView(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(300.dp),
-//                    factory = { context ->
-//                        WebView(context).apply {
-//                            settings.javaScriptEnabled = true
-//                            setBackgroundColor(Color.TRANSPARENT)
-//                            loadUrl("file:///android_asset/webview1.html")
-//                            addJavascriptInterface(
-//                                JavascriptBridge(),
-//                                "Native"
-//                            )
-//                        }
-//                    }
-//                )
-//            }
-//        }
     }
 
+    override fun onBackPressed() {
+        // super.onBackPressed()
 
-    class JavascriptBridge(){
+        binding.webView.loadUrl("javascript: onBackClick()")
+    }
+
+    inner class JavascriptBridge(){
         @JavascriptInterface
         fun showMessage(){
-            System.out.println("Message Received");
+            System.out.println("Message Received")
             Toast.makeText(this@MainActivity, "Message Received", Toast.LENGTH_SHORT).show()
         }
+
+        @JavascriptInterface
+        fun appClose(){
+            Toast.makeText(this@MainActivity, "APP CLOSE", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        @JavascriptInterface
+        fun showOutBrowser(doOut: Boolean, url : String){
+            Log.e("[TAG]", doOut.toString())
+            Log.e("[TAG]", url)
+
+            if(doOut){
+                binding.webView.webViewClient= object : WebViewClient(){
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        //return super.shouldOverrideUrlLoading(view, request)
+                        return true
+                    }
+                }
+            }else{
+                binding.webView.webViewClient= object : WebViewClient(){
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        //return super.shouldOverrideUrlLoading(view, request)
+                        return false
+                    }
+                }
+            }
+
+            binding.webView.loadUrl(url)
+        }
+
+//        @JavascriptInterface
+//        fun showOutBrowser(url: String){
+//            binding.webView.webViewClient= object : WebViewClient(){
+//                override fun shouldOverrideUrlLoading(
+//                    view: WebView?,
+//                    request: WebResourceRequest?
+//                ): Boolean {
+//                    //return super.shouldOverrideUrlLoading(view, request)
+//                    return true
+//                }
+//            }
+//
+//            binding.webView.loadUrl(url)
+//
+//        }
+
+
+
+
     }
+
+
+
+    // TODO 두 번 탭하여 앱을 종료시키기
+
+    // TODO 네이버로 이동하고나서 다시 뒤로 돌아가기가 안된다. 이 때는 자바스크립트로 제어가 안되는데 이때는 어떻게 해야 하는가?
+
+    // TODO 액티비티를 하나 더 만들어서 외부 URL을 띄우고 백버튼으로 닫을 수 있도록 해보자.
+
+
+
 
 
 
