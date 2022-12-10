@@ -1,5 +1,6 @@
 package com.yjj.yjj1127
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.webkit.JavascriptInterface
@@ -50,8 +51,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         // super.onBackPressed()
+        // binding.webView.loadUrl("javascript: onBackClick()")
 
-        binding.webView.loadUrl("javascript: onBackClick()")
     }
 
     inner class JavascriptBridge(){
@@ -73,28 +74,42 @@ class MainActivity : AppCompatActivity() {
             Log.e("[TAG]", url)
 
             if(doOut){
-                binding.webView.webViewClient= object : WebViewClient(){
-                    override fun shouldOverrideUrlLoading(
-                        view: WebView?,
-                        request: WebResourceRequest?
-                    ): Boolean {
-                        //return super.shouldOverrideUrlLoading(view, request)
-                        return true
-                    }
-                }
+                val intent = Intent(this@MainActivity, InnerBrowserActivity::class.java)
+                intent.putExtra("URL", url)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                startActivity(intent)
             }else{
-                binding.webView.webViewClient= object : WebViewClient(){
-                    override fun shouldOverrideUrlLoading(
-                        view: WebView?,
-                        request: WebResourceRequest?
-                    ): Boolean {
-                        //return super.shouldOverrideUrlLoading(view, request)
-                        return false
-                    }
-                }
+                val intent = Intent(this@MainActivity, OuterBrowserActivity::class.java)
+                intent.putExtra("URL", url)
+                startActivity(intent)
             }
 
-            binding.webView.loadUrl(url)
+            //binding.webView.loadUrl(url)
+
+//            if(doOut){
+//                binding.webView.webViewClient= object : WebViewClient(){
+//                    override fun shouldOverrideUrlLoading(
+//                        view: WebView?,
+//                        request: WebResourceRequest?
+//                    ): Boolean {
+//                        //return super.shouldOverrideUrlLoading(view, request)
+//                        return true
+//                    }
+//                }
+//            }else{
+//                binding.webView.webViewClient= object : WebViewClient(){
+//                    override fun shouldOverrideUrlLoading(
+//                        view: WebView?,
+//                        request: WebResourceRequest?
+//                    ): Boolean {
+//                        //return super.shouldOverrideUrlLoading(view, request)
+//                        return false
+//                    }
+//                }
+//            }
+//
+//
+//            binding.webView.loadUrl(url)
         }
 
 //        @JavascriptInterface
@@ -114,15 +129,16 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-
-
     }
+
 
 
 
     // TODO 두 번 탭하여 앱을 종료시키기
 
+
     // TODO 네이버로 이동하고나서 다시 뒤로 돌아가기가 안된다. 이 때는 자바스크립트로 제어가 안되는데 이때는 어떻게 해야 하는가?
+
 
     // TODO 액티비티를 하나 더 만들어서 외부 URL을 띄우고 백버튼으로 닫을 수 있도록 해보자.
 
