@@ -1,12 +1,14 @@
 package com.yjj.yjj1127
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -30,6 +32,9 @@ class MainActivity : AppCompatActivity() {
     val binding : ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+
+
 
     var permissionlistener: PermissionListener = object : PermissionListener {
         override fun onPermissionGranted() {
@@ -77,6 +82,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -99,6 +106,10 @@ class MainActivity : AppCompatActivity() {
 
 
         val wv=binding.webView
+
+        wv.settings.javaScriptEnabled=true
+
+
         wv.webChromeClient= object: WebChromeClient(){
             override fun onShowFileChooser(
                 webView: WebView?,
@@ -149,38 +160,18 @@ class MainActivity : AppCompatActivity() {
 
         wv.loadUrl(url)
 
-
-//        binding.cameraButton.setOnClickListener {
-//            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-//            val StorageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//            val file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", StorageDir)
-//            val photoUri : Uri = FileProvider.getUriForFile(this, "com.yjj.yjj1127.android.file-provider", file)
-//
-//            filePath = file.absolutePath
-//
-//            //Toast.makeText(this, "${file.exists()} ${file.length()}", Toast.LENGTH_SHORT).show()
-//            // Log.e("[MYCamera]", "${file.exists()} ${file.length()}")
-//
-//            val camera_intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//            camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-//            //startActivityForResult(camera_intent, CARMER_PIC_ID)
-//            launcher.launch(camera_intent)
-//        }
-
-
-
     }
 
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == CARMER_PIC_ID && resultCode == Activity.RESULT_OK) {
-//
-//
-//
-//
-//        }
-//    }
+
+    class JavascriptBridge(){
+        @JavascriptInterface
+        fun showMessage(){
+            System.out.println("Message Received");
+        }
+    }
+
+
 
 
 
